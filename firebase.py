@@ -27,7 +27,7 @@ class OutputFirebase(object):
         'properties': {
             'storage': {'type': 'string'},
             'auth': {'type': 'string'},
-            'grouping': {'type': 'boolean', 'default': True},
+            'grouping': {'type': 'boolean', 'default': False},
             'key': {'type': 'string', 'default': ""},
             'path': {'type': 'string', 'default': ""},
             'fields': {'type': 'array', 'items': {'type': 'string'}, 'default': ['title','url']}
