@@ -1,9 +1,9 @@
-import logging, urllib, re
+import logging, urllib, re, jsonpickle
 
 from datetime import datetime
 from flexget import plugin
 from flexget.event import event
-from flexget.utils import json, requests
+from flexget.utils import requests
 from flexget.utils.template import render_from_entry
 
 log = logging.getLogger('firebase')
@@ -71,7 +71,7 @@ class OutputFirebase(object):
                 log.verbose("Requesting Firebase: " + method.upper() + " " + url)
                 log.verbose(item)
 
-                response = requests.request(method, config['storage'] + "/" + path + ".json?print=pretty&auth=" + config['auth'], data=json.dumps(item))
+                response = requests.request(method, url, data=jsonpickle.encode(item, unpicklable=False))
 
                 log.verbose('Firebase response: ' + response.text)
 
