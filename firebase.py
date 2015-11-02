@@ -12,14 +12,15 @@ class OutputFirebase(object):
     """
     Usage:
         firebase:
-            storage: https://my-storage.firebaseio.com
-            auth: my-key
+            storage: https://<storage>.firebaseio.com
+            auth: <token>
             path: "group/{{entry_field}}"
             grouping: yes|no
             key: "{{entry_field}}"
             fields:
                 - title
                 - url
+                - host: '{% set domain = url.split("://")[1].split("/")[0].replace("www.", "") %}{{ domain }}'
     """
 
     schema = {
@@ -30,7 +31,21 @@ class OutputFirebase(object):
             'grouping': {'type': 'boolean', 'default': False},
             'key': {'type': 'string', 'default': ""},
             'path': {'type': 'string', 'default': ""},
-            'fields': {'type': 'array', 'items': {'type': 'string'}, 'default': ['title','url']}
+            'fields': {
+                'type': 'array',
+                'items': {
+                    'oneOf': [
+                        {'type': 'string'},
+                        {
+                            'type': 'object',
+                            'additionalProperties': [
+                                {'type': 'string'}
+                            ]
+                        }
+                    ]
+                },
+                'default': ['title','url']
+            }
         },
         'additionalProperties': False
     }
@@ -40,7 +55,9 @@ class OutputFirebase(object):
             item = {}
 
             for key in config['fields']:
-                if entry.get(key):
+                if type(key) is dict:
+                    item[key.keys()[0]] = render_from_entry(key.values()[0], entry)
+                elif entry.get(key):
                     item[key] = entry[key]
 
             try:
