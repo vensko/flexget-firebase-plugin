@@ -27,7 +27,7 @@ class OutputFirebase(object):
         'type': 'object',
         'properties': {
             'storage': {'type': 'string'},
-            'auth': {'type': 'string'},
+            'auth': {'type': 'string','default': ""},
             'grouping': {'type': 'boolean', 'default': False},
             'key': {'type': 'string', 'default': ""},
             'path': {'type': 'string', 'default': ""},
@@ -83,7 +83,10 @@ class OutputFirebase(object):
                     method = "post"
 
                 path = urllib.quote("/".join(path))
-                url = config['storage'] + "/" + path + ".json?auth=" + config['auth']
+                url = config['storage'] + "/" + path + ".json"
+
+                if config['auth']:
+                    url += "?auth=" + config['auth']
 
                 log.verbose("Requesting Firebase: " + method.upper() + " " + url)
                 log.verbose(item)
